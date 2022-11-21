@@ -1,0 +1,24 @@
+PLAY [all] *********************************************************************
+
+TASK [ansible-playbook-cli-cisco-ios : run ios command show inventory] *********
+ok: [10.0.0.107]
+
+TASK [ansible-playbook-cli-cisco-ios : debug] **********************************
+ok: [10.0.0.107] => {
+    "msg": {
+        "changed": false,
+        "failed": false,
+        "stdout": [
+            "NAME: \"IOSv\", DESCR: \"IOSv chassis, Hw Serial#: 9FJKNKHE4U8YMCPBY1RCM, Hw Revision: 1.0\"\nPID: IOSv              , VID: 1.0, SN: 9FJKNKHE4U8YMCPBY1RCM"
+        ],
+        "stdout_lines": [
+            [
+                "NAME: \"IOSv\", DESCR: \"IOSv chassis, Hw Serial#: 9FJKNKHE4U8YMCPBY1RCM, Hw Revision: 1.0\"",
+                "PID: IOSv              , VID: 1.0, SN: 9FJKNKHE4U8YMCPBY1RCM"
+            ]
+        ]
+    }
+}
+
+PLAY RECAP *********************************************************************
+10.0.0.107                 : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
