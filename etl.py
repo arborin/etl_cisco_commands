@@ -47,15 +47,20 @@ def get_parsed_version_job_output(raw_data):
     result = result['msg']['stdout_lines'][0][0].split(',')
 
     # RESULT EXAMPLE:
-    # "Cisco IOS Software, IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.9(3)M4, RELEASE SOFTWARE (fc3)",
+    # stdout_lines": [
+    #   [
+    #       "Cisco IOS Software, IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.9(3)M4, RELEASE SOFTWARE (fc3)"
+    #   ]
 
     for line in result[1:]:
         line = line.strip()
 
         res = line.split(' ')
         key = " ".join(res[:-1])
-        # remove () from start and end of string
-        value = res[-1].lstrip('(').rstrip(')')
+
+        # REMOVE '(' AND ')' FROM START AND END OF VALUE STRING
+        value = res[-1].lstrip('(').rstrip(')')  # LAST ELEMENT IS THE VALUE
+
         json_data[key] = value
 
     print(json_data)
@@ -72,11 +77,21 @@ def get_parsed_inventory_job_output(raw_data):
     #     "SN": "9FJKNKHE4U8YMCPBY1RCM"
     # }
 
+    # EXAMPLE LINE
+    # stdout_lines : [
+    #   "NAME: \"IOSv\", DESCR: \"IOSv chassis, Hw Serial#: 9FJKNKHE4U8YMCPBY1RCM, Hw Revision: 1.0\"",
+    #   "PID: IOSv              , VID: 1.0, SN: 9FJKNKHE4U8YMCPBY1RCM"
+    # ]
+
     json_data = {}
     result = get_json_from_text(raw_data)
 
-    result = result['msg']['stdout'][0].replace('"', '')
+    result = result['msg']['stdout_lines'][0]
 
+    # JOIN LIST TWO ELEMENT AND REPLACE "_SYMBOL
+    result = ", ".join(result).replace('"', "")
+
+    print(result)
     for data in result.split(','):
         (key, val) = data.strip().split(':')
         json_data[key] = val.strip()
@@ -86,10 +101,10 @@ def get_parsed_inventory_job_output(raw_data):
 
 def main():
 
-    file_path = 'cisco-nxos-show-version.txt'
-    job_name = 'version'
-    # file_path = 'cisco-nxos-show-inventory.txt'
-    # job_name = 'inventory'
+    # file_path = 'cisco-nxos-show-version.txt'
+    # job_name = 'version'
+    file_path = 'cisco-nxos-show-inventory.txt'
+    job_name = 'inventory'
 
     # file_path = 'path to cisco-nxos-show-version.txt'
     # job_name = 'version'
