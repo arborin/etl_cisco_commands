@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import sys
@@ -100,6 +101,16 @@ def get_parsed_inventory_job_output(raw_data):
 
 
 def main():
+
+    ap = argparse.ArgumentParser()
+    # Add the arguments to the parser
+    ap.add_argument("-j", choices=['version', 'inventory'], required=True,
+                    help="Job Name")
+    ap.add_argument("-p", "--path", required=True,
+                    help="File Path")
+    args = vars(ap.parse_args())
+
+    print(args['j'])
 
     # file_path = 'cisco-nxos-show-version.txt'
     # job_name = 'version'
