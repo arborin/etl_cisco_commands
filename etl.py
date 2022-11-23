@@ -44,10 +44,19 @@ def get_parsed_version_job_output(raw_data):
 
     json_data = {}
     result = get_json_from_text(raw_data)
-    result = result['msg']['stdout'][0].split(',')
-    json_data['iosv_software'] = result[1].strip()
-    json_data['version'] = result[2].strip()
-    json_data['release_software'] = result[3].strip()
+    result = result['msg']['stdout_lines'][0][0].split(',')
+
+    # RESULT EXAMPLE:
+    # "Cisco IOS Software, IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.9(3)M4, RELEASE SOFTWARE (fc3)",
+
+    for line in result[1:]:
+        line = line.strip()
+
+        res = line.split(' ')
+        key = " ".join(res[:-1])
+        # remove () from start and end of string
+        value = res[-1].lstrip('(').rstrip(')')
+        json_data[key] = value
 
     print(json_data)
 
@@ -77,10 +86,10 @@ def get_parsed_inventory_job_output(raw_data):
 
 def main():
 
-    # file_path = 'cisco-nxos-show-version.txt'
-    # job_name = 'version'
-    file_path = 'cisco-nxos-show-inventory.txt'
-    job_name = 'inventory'
+    file_path = 'cisco-nxos-show-version.txt'
+    job_name = 'version'
+    # file_path = 'cisco-nxos-show-inventory.txt'
+    # job_name = 'inventory'
 
     # file_path = 'path to cisco-nxos-show-version.txt'
     # job_name = 'version'
