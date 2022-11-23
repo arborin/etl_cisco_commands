@@ -1,6 +1,5 @@
 import json
 import logging
-import re
 import sys
 
 # from airflow.exceptions import AirflowFailException
@@ -15,33 +14,11 @@ def get_parsed_job_output(job_name, raw_data):
 
     if job_name == 'inventory':
         pass
-        # return get_parsed_inventory_job_output(raw_data)
+        return get_parsed_inventory_job_output(raw_data)
 
     logger.info('invalid job_name in config.')
     sys.tracebacklimit = 0  # set sys.tracebacklimit = None to enable it back
     # raise AirflowFailException("invalid job_name in config.") # task fails without retrying
-
-
-# def result_search(pattern, text):
-#     result = re.search(pattern, text)
-#     if result:
-#         return result.group(1)
-
-
-# def get_parsed_version_job_output(raw_data):
-#     # {
-#     #   "IOSv Software": "VIOS-ADVENTERPRISEK9-M",
-#     #   "Version": "15.9(3)M4",
-#     #   "RELEASE SOFTWARE": "fc3"
-#     # }
-#     # error handling
-#     result = {}
-#     result['IOSv Software'] = result_search('Software \\((.+?)\\)', raw_data)
-#     result['Version'] = result_search('Version (.+?),', raw_data)
-#     result['RELEASE SOFTWARE'] = result_search(
-#         'SOFTWARE \\((.+?)\\)', raw_data)
-
-#     print(result)
 
 
 def get_json_from_text(raw_data):
@@ -75,10 +52,35 @@ def get_parsed_version_job_output(raw_data):
     print(json_data)
 
 
+def get_parsed_inventory_job_output(raw_data):
+    # {
+    #     "NAME": "IOSv",
+    #     "DESCR": "IOSv chassis",
+    #     "Hw Serial#": "9FJKNKHE4U8YMCPBY1RCM",
+    #     "Hw Revision": "1.0",
+    #     "PID": "IOSv",
+    #     "VID": "1.0",
+    #     "SN": "9FJKNKHE4U8YMCPBY1RCM"
+    # }
+
+    json_data = {}
+    result = get_json_from_text(raw_data)
+
+    result = result['msg']['stdout'][0].replace('"', '')
+
+    for data in result.split(','):
+        (key, val) = data.strip().split(':')
+        json_data[key] = val.strip()
+
+    print(json_data)
+
+
 def main():
 
-    file_path = 'cisco-nxos-show-version.txt'
-    job_name = 'version'
+    # file_path = 'cisco-nxos-show-version.txt'
+    # job_name = 'version'
+    file_path = 'cisco-nxos-show-inventory.txt'
+    job_name = 'inventory'
 
     # file_path = 'path to cisco-nxos-show-version.txt'
     # job_name = 'version'
